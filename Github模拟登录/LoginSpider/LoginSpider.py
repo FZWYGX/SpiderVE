@@ -17,32 +17,31 @@ class GithubLogin(object):
         self.post_url = 'https://github.com/session'
         self.session = requests.Session()
 
-    def token(self):
-        response = self.session.get(self.login_url, headers=self.headers)
-        selector = etree.HTML(response.text)
-
-        # 在网页中拿到登录所需的一些data
+    def token(self, selector):
+        # 在网页中拿到登录所需的一些form_data
         authenticity_token = selector.xpath("//input[@name='authenticity_token']/@value")[0]
         utf8 = selector.xpath("//input[@name='utf8']/@value")[0]
         commit = selector.xpath("//input[@name='commit']/@value")[0]
 
-        post_data = dict(authenticity_token=authenticity_token,
+        form_data = dict(authenticity_token=authenticity_token,
                          utf8=utf8,
                          commit=commit)
-        print(post_data)
-        return post_data
+        print(form_data)
+        return form_data
 
     def login(self, username, password, user):
+        response = self.session.get(self.login_url, headers=self.headers)
+        selector = etree.HTML(response.text)
         data = {
             'login': username,
             'password': password
         }
-        post_data = self.token()
-        # 组成完整的data
-        post_data.update(data)
+        form_data = self.token(selector)
+        # 组成完整的form_data
+        form_data.update(data)
 
         # 模拟登录
-        response = self.session.post(self.post_url, data=post_data, headers=self.headers)
+        response = self.session.post(self.post_url, data=form_data, headers=self.headers)
 
         # 向https://github.com/session发起请求后, 他会重定向到https://github.com/
 
