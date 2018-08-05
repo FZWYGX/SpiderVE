@@ -52,6 +52,8 @@ class GithubLogin(object):
                 print("登录成功")
             else:
                 print("登录失败")
+        else:
+            print("response.status_code不是200")
 
 
 if __name__ == "__main__":
