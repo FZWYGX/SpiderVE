@@ -44,7 +44,9 @@ class GithubLogin(object):
         # 模拟登录
         response = self.session.post(self.post_url, data=post_data, headers=self.headers)
 
-        # 验证条件是是否出现了您的用户名
+        # 向https://github.com/session发起请求后, 他会重定向到https://github.com/
+
+        # 验证条件为：是否出现了您的用户名
         if response.status_code == 200:
             user_num = re.findall(user, response.text)
             if len(user) > 0 and len(user_num) > 0 and USER == user_num[0]:
